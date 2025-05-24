@@ -15,6 +15,18 @@ export interface User {
 
 }
 
+async function rowToUser(row: any): Promise<User> {
+  return {
+    chat_id: row.chat_id,
+    conversationState: row.conversationState,
+    wrong_answer_count: row.wrong_answer_count,
+    correct_answer_count: row.correct_answer_count,
+    current_correct_answer_id: row.current_correct_answer_id,
+    city: row.city,
+    country: row.country,
+  };
+}
+
 export async function getOrCreateUser(chat_id: number): Promise<Result<User, Error>> {
   try {
     // Check if user already exists
@@ -25,7 +37,7 @@ export async function getOrCreateUser(chat_id: number): Promise<Result<User, Err
       .limit(1)
 
     if (existingUser.length > 0) {
-      return ok(existingUser[0] as User);
+      return ok(await rowToUser(existingUser[0]));
     }
 
     const [newUser] = await db
@@ -36,14 +48,47 @@ export async function getOrCreateUser(chat_id: number): Promise<Result<User, Err
         wrong_answer_count: 0,
         correct_answer_count:  0,
         current_correct_answer_id: '',
-        city: null,
-        country: null,
       })
       .returning();
 
-    return ok(newUser as User);
+    return ok(await rowToUser(newUser));
   } catch (error) {
     console.error('Error creating user:', error);
     throw new Error('Failed to create user');
+  }
+}
+
+export async function setUserToFlow(user: User): Promise<Result<boolean, Error>> {
+  try {
+    const updatedUser = await db
+      .update(usersTable)
+      .set({
+        conversationState: ConversationState.FLOW,
+      })
+      .where(eq(usersTable.chat_id, user.chat_id))
+
+    return ok(true);
+  } catch (error) {
+    console.error('Error setting user to FLOW state:', error);
+    return err(new Error('Failed to set user to FLOW state'));
+  }
+}
+
+export async function setUserToMainMenu(user: User): Promise<Result<boolean, Error>> {
+  try {
+    await db
+      .update(usersTable)
+      .set({
+        conversationState: ConversationState.MAIN_MENU,
+        wrong_answer_count: 0,
+        correct_answer_count: 0,
+        current_correct_answer_id: '',
+      })
+      .where(eq(usersTable.chat_id, user.chat_id));
+
+    return ok(true);
+  } catch (error) {
+    console.error('Error setting user to MAIN_MENU state:', error);
+    return err(new Error('Failed to set user to MAIN_MENU state'));
   }
 }

@@ -1,7 +1,7 @@
-import { AnswerTelegramMessage } from '@/types/types';
+import { resultTelegramMessage } from '@/types/types';
 import { err, ok, Result } from 'neverthrow'
 
-export async function sendTelegramMessage(message: AnswerTelegramMessage): Promise<Result<boolean, Error>> {
+export async function sendTelegramMessage(message: resultTelegramMessage): Promise<Result<boolean, Error>> {
   const token = process.env.TELEGRAM_TOKEN;
   if (!token) {
     console.error('TELEGRAM_TOKEN not set');
@@ -11,7 +11,7 @@ export async function sendTelegramMessage(message: AnswerTelegramMessage): Promi
   const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message }),
+    body: JSON.stringify(message ),
   });
 
   const data = await response.json();

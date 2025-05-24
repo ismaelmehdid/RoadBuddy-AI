@@ -80,12 +80,9 @@ importers:
       telegraf:
         specifier: ^4.16.3
         version: 4.16.3
-<<<<<<< HEAD
-=======
       zob:
         specifier: ^1.0.1
         version: 1.0.1
->>>>>>> 3395723e8a5e33c3f31fa6ad7ffd0f419b3b30fb
       zod:
         specifier: ^3.25.28
         version: 3.25.28
@@ -6388,17 +6385,10 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-<<<<<<< HEAD
-  zod-to-json-schema@3.24.5(zod@3.25.28):
-    dependencies:
-      zod: 3.25.28
-
-=======
   zob@1.0.1: {}
 
   zod-to-json-schema@3.24.5(zod@3.25.28):
     dependencies:
       zod: 3.25.28
 
->>>>>>> 3395723e8a5e33c3f31fa6ad7ffd0f419b3b30fb
   zod@3.25.28: {}
