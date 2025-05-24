@@ -92,3 +92,36 @@ export async function setUserToMainMenu(user: User): Promise<Result<boolean, Err
     return err(new Error('Failed to set user to MAIN_MENU state'));
   }
 }
+
+export async function updateUser(
+  user: User,
+  city: City | null,
+  country: Countries | null
+): Promise<Result<User, Error>> {
+  try {
+    const updateData: Record<string, any> = {};
+    if (city !== null) {
+      updateData.city = city;
+    }
+
+    if (country !== null) {
+      updateData.country = country;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      const updatedUser = await db
+        .update(usersTable)
+        .set(updateData)
+        .where(eq(usersTable.chat_id, user.chat_id))
+        .returning();
+      if (updatedUser.length === 0) {
+        return err(new Error('User not found'));
+      }
+      return ok(await rowToUser(updatedUser[0]));
+    }
+    return (ok(user));
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return err(new Error('Failed to update user'));
+  }
+}

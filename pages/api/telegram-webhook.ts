@@ -1,6 +1,6 @@
 'use server';
 import { FlowRunner } from '@/flowRunner';
-import { InputTelegramMessageSchema } from '@/types/types';
+import { CallbackQuerySchema, InputTelegramMessageSchema } from '@/types/types';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Telegraf } from 'telegraf';
 
@@ -23,7 +23,7 @@ bot.on('text', async (ctx) => {
     return ctx.reply('Invalid message format');
   }
 
-  const result = await flowRunner.run(message.data);
+  const result = await flowRunner.run(message.data.chat.id, null);
 
   if (result.isErr()) {
     console.error('Error processing message:', result.error);
@@ -33,11 +33,22 @@ bot.on('text', async (ctx) => {
 
 bot.on('callback_query', async (ctx) => {
   const callbackQuery = ctx.callbackQuery;
-
+  
   console.log('Received callback query:', callbackQuery);
 
-
-  await ctx.answerCbQuery('Спасибо за ваш выбор!');
+  const message = CallbackQuerySchema.safeParse(callbackQuery);
+  if (!message.success) {
+    console.error('Invalid message format:', message.error);
+    return ctx.reply('Invalid reply format');
+  } else {
+    console.log('Valid callback query:', message.data);
+  }
+    const result = await flowRunner.run(message.data.message.chat.id, message.data.data);
+  if (result.isErr()) {
+    console.error('Error processing message:', result.error);
+    return ctx.reply('Error processing your request.');
+  }
+    ctx.answerCbQuery('Processing your request...');
 });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

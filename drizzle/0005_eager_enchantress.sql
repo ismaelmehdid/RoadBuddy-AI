@@ -1,0 +1,12 @@
+CREATE TYPE "public"."userCity" AS ENUM('PARIS');
+CREATE TYPE "public"."userCountry" AS ENUM('FRANCE');
+ALTER TABLE "users" ALTER COLUMN "conversationState" SET DATA TYPE text;
+ALTER TABLE "users" ALTER COLUMN "conversationState" SET DEFAULT 'MAIN_MENU'::text;
+DROP TYPE IF EXISTS "public"."ConversationState";
+CREATE TYPE "public"."ConversationState" AS ENUM('MAIN_MENU', 'FLOW');
+ALTER TABLE "users" ALTER COLUMN "conversationState" SET DEFAULT 'MAIN_MENU'::"public"."ConversationState";
+ALTER TABLE "users" ALTER COLUMN "conversationState" SET DATA TYPE "public"."ConversationState" USING "conversationState"::"public"."ConversationState";
+ALTER TABLE "users" DROP COLUMN IF EXISTS "chat_id";
+ALTER TABLE "users" ADD COLUMN "chat_id" INTEGER;
+ALTER TABLE "users" ADD COLUMN "city" "userCity";
+ALTER TABLE "users" ADD COLUMN "country" "userCountry";

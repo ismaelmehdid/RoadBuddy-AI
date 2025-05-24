@@ -1,0 +1,121 @@
+{
+  "id": "2c449614-0d98-4cd5-bb4c-af5e8aad1149",
+  "prevId": "4b37e06f-8aa3-43da-a60e-843b76a4b38d",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.users": {
+      "name": "users",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "integer",
+          "primaryKey": true,
+          "notNull": true,
+          "identity": {
+            "type": "always",
+            "name": "users_id_seq",
+            "schema": "public",
+            "increment": "1",
+            "startWith": "1",
+            "minValue": "1",
+            "maxValue": "2147483647",
+            "cache": "1",
+            "cycle": false
+          }
+        },
+        "chat_id": {
+          "name": "chat_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "conversationState": {
+          "name": "conversationState",
+          "type": "ConversationState",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'MAIN_MENU'"
+        },
+        "wrong_answer_count": {
+          "name": "wrong_answer_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "correct_answer_count": {
+          "name": "correct_answer_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "current_correct_answer_id": {
+          "name": "current_correct_answer_id",
+          "type": "varchar(1)",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "''"
+        },
+        "city": {
+          "name": "city",
+          "type": "userCity",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "country": {
+          "name": "country",
+          "type": "userCountry",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.ConversationState": {
+      "name": "ConversationState",
+      "schema": "public",
+      "values": [
+        "MAIN_MENU",
+        "FLOW"
+      ]
+    },
+    "public.userCity": {
+      "name": "userCity",
+      "schema": "public",
+      "values": [
+        "PARIS"
+      ]
+    },
+    "public.userCountry": {
+      "name": "userCountry",
+      "schema": "public",
+      "values": [
+        "FRANCE"
+      ]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

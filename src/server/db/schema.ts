@@ -1,4 +1,4 @@
-import { ConversationState } from "@/types/types";
+import { City, ConversationState, Countries } from "@/types/types";
 import { integer, pgEnum, pgTable, varchar } from "drizzle-orm/pg-core";
 
 export function enumToPgEnum<T extends Record<string, any>>(
@@ -12,6 +12,16 @@ export const conversationState = pgEnum(
   enumToPgEnum(ConversationState),
 );
 
+export const userCity = pgEnum(
+  'userCity',
+  enumToPgEnum(City),
+);
+
+export const userCountry = pgEnum(
+  'userCountry',
+  enumToPgEnum(Countries),
+);
+
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   chat_id: integer("chat_id").notNull(),
@@ -21,4 +31,6 @@ export const usersTable = pgTable("users", {
   wrong_answer_count: integer("wrong_answer_count").default(0),
   correct_answer_count: integer("correct_answer_count").default(0),
   current_correct_answer_id: varchar("current_correct_answer_id", { length: 1 }).default(''),
+  city: userCity('city'),
+  country: userCountry('country'),
 });
