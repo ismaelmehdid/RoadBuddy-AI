@@ -43,7 +43,7 @@ A Telegram chatbot that teaches driving theory with real street photos from your
    It’s better to use our existing bot since it already has an avatar, description, and other details. If you create your own bot, it will be fully functional but will appear as a blank bot.
    
    For any questions or assistance, feel free to reach out to me:
-   - **LinkenIn**: [Andrii Syvash](https://www.linkedin.com/in/asyvash/)
+   - **LinkedIn**: [Andrii Syvash](https://www.linkedin.com/in/asyvash/)
    - **Email**: [asyvash.work.it@gmail.com](mailto:asyvash.work.it@gmail.com)
    
    To create your own bot, simply follow these steps:
