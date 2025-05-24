@@ -13,11 +13,16 @@ license = {text = "MIT"}
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "requests==2.32.3"
+    "requests==2.32.3",
+    "python-dotenv==1.1.0",
+    "boto3== 1.38.23",
+    "mistralai==1.7.1",
+    "fastapi==0.115.12",
+    "mangum==0.19.0",
 ]
 
 [tool.setuptools]
-packages = ["api", "clients", "shared"]
+packages = ["api", "clients", "shared", "controllers"]
 
 [project.optional-dependencies]
 dev = []
