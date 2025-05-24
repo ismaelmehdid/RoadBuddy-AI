@@ -9,8 +9,10 @@ from dotenv import load_dotenv, find_dotenv
 from clients.s3_client import AWSS3Client
 from clients.role_assumer_client import AWSRoleAssumer
 from controllers.driving_exam_chat_contoller import DrivingExamChatController
+from controllers.street_image_controller import StreetImageController
 from api.routes.exam_chat import ExamChatRoute
 from api.routes.exam_chat_question import ExamChatQuestionRoute
+from api.routes.street_image import StreetImageRoute
 from api.routes.liveness import LivenessRoute
 from shared.constants import (
     APIEndpoints,
@@ -22,6 +24,8 @@ load_dotenv(find_dotenv(), override=True)
 def create_app(
     logger: logging.Logger,
     s3_client: AWSS3Client,
+    mistral_client: Mistral,
+    mapillary_token: str,
     env: str='prod'
     ) -> FastAPI:
     
@@ -49,7 +53,9 @@ def create_app(
         mistral_client=mistral_client,
         s3_client=s3_client,
         logger=logger
-    )  
+    )
+
+    street_image_controller = StreetImageController(api_token=mapillary_token)
 
     exam_chat_route = ExamChatRoute(driving_exam_chat_controller, logger)
     logger.info("Adding exam chat routes")
@@ -60,6 +66,11 @@ def create_app(
     logger.info("Adding exam question chat routes")
     exam_chat_route.add_api_routes(router)
     logger.info("Added exam question chat routes")
+
+    exam_chat_route = StreetImageRoute(street_image_controller, logger)
+    logger.info("Adding street image routes")
+    exam_chat_route.add_api_routes(router)
+    logger.info("Added street image routes")
     
 
     liveness_route = LivenessRoute()
@@ -75,6 +86,7 @@ def create_app(
 FORMAT = '%(asctime)s [%(levelname)s] %(message)s'
 ENV = os.getenv("ENV", "prod")
 
+mapillary_token = os.getenv("MAPILLARY_TOKEN")
 mistral_api_key = os.getenv("MISTRAL_API_KEY")
 mistral_client = Mistral(api_key=mistral_api_key)
 
@@ -97,6 +109,8 @@ try:
     app = create_app(
         logger=logger,
         s3_client=s3_client,
+        mistral_client=mistral_client,
+        mapillary_token=mapillary_token,
         env=ENV
         )
 except Exception as e:
