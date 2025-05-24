@@ -10,7 +10,6 @@ class LivenessRoute:
         pass
     
     def add_api_routes(self, router: APIRouter) -> None:
-        print("Adding liveness route")
         router.add_api_route(APIEndpoints.LIVENESS.value, self.get, methods=['GET'])
     
     async def get(self, request: Request) -> Dict:

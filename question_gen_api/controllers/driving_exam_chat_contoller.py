@@ -54,10 +54,27 @@ class DrivingExamChatController:
         })
         self._save_chat_history(chat_id)
         self._logger.info(f"Generated driving questions for image {image_url} in chat {chat_id}")
-        return chat_id, response
+
+        try:
+            question_parsed = json.loads('{' + response.model_dump()["choices"][0]["message"]["content"].split('{')[1].split('}')[0] + '}')
+            result = {
+                "question": question_parsed.get("question", ""),
+                "answers": question_parsed.get("answers", []),
+                "explanation": question_parsed.get("explanation", ""),
+                "correct_answer": question_parsed.get("correct_answer", ""),
+
+            }
+        except json.JSONDecodeError as e:
+            result = {
+                "question": "",
+                "answers": [],
+                "explanation": "",
+                "correct_answer": "",
+            }
+        return chat_id, result
 
 
-    def ask_followup_question(self, question: str, chat_id: Optional[str] = None) -> Dict:
+    def ask_followup_question(self, question: str, chat_id: Optional[str] = None) -> str:
         if not chat_id:
             chat_id = self._generate_chat_id()
         else:
@@ -84,7 +101,9 @@ class DrivingExamChatController:
         })
         self._save_chat_history(chat_id)
         self._logger.info(f"Asked question in chat {chat_id}: {question}")
-        return response
+        result = response.model_dump()["choices"][0]["message"]["content"]
+        return result
+
 
 
     def _generate_chat_id(self):

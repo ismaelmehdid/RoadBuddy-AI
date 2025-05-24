@@ -1,30 +1,37 @@
 import boto3
 import os
 import io
+from typing import Optional
 from dotenv import load_dotenv, find_dotenv
 from botocore.exceptions import BotoCoreError, NoCredentialsError
 from clients.role_assumer_client import AWSRoleAssumer
 from shared.constants import S3_BUCKET_NAME
 
-load_dotenv(find_dotenv())
+load_dotenv(find_dotenv(), override=True)
 
 
 class AWSS3Client:
-    def __init__(self, role_assumer):
+    def __init__(self, role_assumer: Optional[AWSRoleAssumer]):
         self.role_assumer = role_assumer
         self.s3 = self.create_s3_client()
 
 
     def create_s3_client(self):
-        credentials = self.role_assumer.get_credentials()
-        
-        return boto3.client(
-            "s3",
-            aws_access_key_id=credentials["accessKeyId"],
-            aws_secret_access_key=credentials["secretAccessKey"],
-            aws_session_token=credentials["sessionToken"],
-            region_name=os.getenv("AWS_REGION"),
-        )
+        if self.role_assumer:
+            credentials = self.role_assumer.get_credentials()
+            return boto3.client(
+                "s3",
+                aws_access_key_id=credentials["accessKeyId"],
+                aws_secret_access_key=credentials["secretAccessKey"],
+                aws_session_token=credentials["sessionToken"],
+                region_name=os.getenv("AWS_REGION"),
+            )
+        else:
+            #assuming we are running in an environment with a role already assumed
+            return boto3.client(
+                "s3",
+                region_name=os.getenv("AWS_REGION"),
+            )
 
 
     def list_folder_objects(self, bucket_name, folder_path):
@@ -38,6 +45,7 @@ class AWSS3Client:
 
     def read_file(self, bucket_name, object_key):
         self.role_refresh_middleware()
+        print(f"Reading file from bucket: {bucket_name}, key: {object_key}")
         try:
             response = self.s3.get_object(Bucket=bucket_name, Key=object_key)
             return io.BytesIO(response["Body"].read())
@@ -54,7 +62,7 @@ class AWSS3Client:
 
 
     def role_refresh_middleware(self):
-        if self.role_assumer.needs_refresh():
+        if self.role_assumer and self.role_assumer.needs_refresh():
             self.role_assumer.rotate_credentials()
             self.s3 = self.create_s3_client()
 

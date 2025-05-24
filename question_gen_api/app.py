@@ -10,6 +10,7 @@ from clients.s3_client import AWSS3Client
 from clients.role_assumer_client import AWSRoleAssumer
 from controllers.driving_exam_chat_contoller import DrivingExamChatController
 from api.routes.exam_chat import ExamChatRoute
+from api.routes.exam_chat_question import ExamChatQuestionRoute
 from api.routes.liveness import LivenessRoute
 from shared.constants import (
     APIEndpoints,
@@ -51,14 +52,20 @@ def create_app(
     )  
 
     exam_chat_route = ExamChatRoute(driving_exam_chat_controller, logger)
-    logger.info("Adding workcost prediction routes")
+    logger.info("Adding exam chat routes")
     exam_chat_route.add_api_routes(router)
-    logger.info("Added workcost prediction routes")
+    logger.info("Added exam chat routes")
+
+    exam_chat_route = ExamChatQuestionRoute(driving_exam_chat_controller, logger)
+    logger.info("Adding exam question chat routes")
+    exam_chat_route.add_api_routes(router)
+    logger.info("Added exam question chat routes")
+    
 
     liveness_route = LivenessRoute()
-    logger.info("Adding workcost prediction routes")
+    logger.info("Adding liveness routes")
     liveness_route.add_api_routes(router)
-    logger.info("Added workcost prediction routes")
+    logger.info("Added liveness routes")
     
     app.include_router(router)
     return app
@@ -71,8 +78,12 @@ ENV = os.getenv("ENV", "prod")
 mistral_api_key = os.getenv("MISTRAL_API_KEY")
 mistral_client = Mistral(api_key=mistral_api_key)
 
-role_arn = os.getenv("AWS_ROLE_ARN")
-aws_role_assumer = AWSRoleAssumer(role_arn, rotation_minutes=30)
+role_arn = os.getenv("AWS_ROLE_ARN", None)
+if role_arn :
+    aws_role_assumer = AWSRoleAssumer(role_arn, rotation_minutes=30)
+else:
+    aws_role_assumer = None
+
 s3_client = AWSS3Client(aws_role_assumer)
 
 

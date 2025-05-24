@@ -10,5 +10,6 @@ class APIEndpoints(Enum):
     OPENAPI_URL = "/api/v1/openapi.json"
     LIVENESS = "/api/v1/healthy"
     EXAM_CHAT = "/api/v1/exam-chat"
+    EXAM_CHAT_QUESTION = "/api/v1/exam-chat-question"
 
 

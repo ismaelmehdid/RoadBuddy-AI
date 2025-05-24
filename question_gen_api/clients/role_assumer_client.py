@@ -3,7 +3,7 @@ import time
 import os
 from datetime import datetime, timedelta
 from dotenv import load_dotenv, find_dotenv
-load_dotenv(find_dotenv())
+load_dotenv(find_dotenv(), override=True)
 
 
 class AWSRoleAssumer:
@@ -36,12 +36,14 @@ class AWSRoleAssumer:
                 RoleArn=self._role_arn,
                 RoleSessionName="session"
             )
+
             
             credentials = response["Credentials"]
             self._access_key_id = credentials["AccessKeyId"]
             self._secret_access_key = credentials["SecretAccessKey"]
             self._session_token = credentials["SessionToken"]
             self._last_rotation_time = datetime.now()
+ 
         
         except Exception as e:
             raise RuntimeError(f"Unable to assume role: {e}")
@@ -55,6 +57,6 @@ if __name__ == '__main__':
     from dotenv import load_dotenv, find_dotenv
     import os
     load_dotenv(find_dotenv())
-    
+
     role_arn = os.getenv("AWS_ROLE_ARN")
     aws_role_assumer = AWSRoleAssumer(role_arn, rotation_minutes=30)

@@ -11,8 +11,8 @@ Resources:
   AppFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: api/
-      Handler: main.handler
+      CodeUri: .
+      Handler: app.handler
       Runtime: python3.12
       Events:
         Root:
