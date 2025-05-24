@@ -12,7 +12,6 @@ export interface User {
   current_correct_answer_id: string;
   city:  City | null;
   country:  Countries | null;
-
 }
 
 async function rowToUser(row: any): Promise<User> {
@@ -125,5 +124,53 @@ export async function updateUser(
   } catch (error) {
     console.error('Error updating user:', error);
     return err(new Error('Failed to update user'));
+  }
+}
+
+export async function updateUserCorrectAnswerCount(chat_id: number, correct_answer_count: number): Promise<Result<void, Error>> {
+  try {
+    await db
+      .update(usersTable)
+      .set({
+        correct_answer_count: correct_answer_count,
+      })
+      .where(eq(usersTable.chat_id, chat_id))
+      .returning();
+    return ok(undefined);
+  } catch (error) {
+    console.error('Error updating user correct answer count:', error);
+    return err(new Error('Failed to update user correct answer count'));
+  }
+}
+
+export async function updateUserWrongAnswerCount(chat_id: number, wrong_answer_count: number): Promise<Result<void, Error>> {
+  try {
+    await db
+      .update(usersTable)
+      .set({
+        wrong_answer_count: wrong_answer_count,
+      })
+      .where(eq(usersTable.chat_id, chat_id))
+      .returning();
+    return ok(undefined);
+  } catch (error) {
+    console.error('Error updating user wrong answer count:', error);
+    return err(new Error('Failed to update user wrong answer count'));
+  }
+}
+
+export async function updateUserCurrentCorrectAnswerId(chat_id: number, current_correct_answer_id: string): Promise<Result<void, Error>> {
+  try {
+    await db
+      .update(usersTable)
+      .set({
+        current_correct_answer_id: current_correct_answer_id,
+      })
+      .where(eq(usersTable.chat_id, chat_id))
+      .returning();
+    return ok(undefined);
+  } catch (error) {
+    console.error('Error updating user current correct answer id:', error);
+    return err(new Error('Failed to update user current correct answer id'));
   }
 }

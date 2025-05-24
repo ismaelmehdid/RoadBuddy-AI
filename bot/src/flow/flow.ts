@@ -1,7 +1,8 @@
-import { getOrCreateUser, setUserToFlow, setUserToMainMenu, updateUser, User } from "../db/user";
-import { sendTelegramMessage } from "../telegram_interactions/interactions";
+import { getOrCreateUser, setUserToFlow, setUserToMainMenu, updateUser, updateUserCorrectAnswerCount, updateUserCurrentCorrectAnswerId, updateUserWrongAnswerCount, User } from "../db/user";
+import { sendTelegramMessage, sendTelegramPhoto } from "../telegram_interactions/interactions";
+import { getQuestion, getQuestionImageUrl } from "../telegram_interactions/question";
 import { message_templates } from "../types/message_templates";
-import { CallbackAnswer, ConversationState, resultTelegramMessage } from "../types/types";
+import { CallbackAnswer, ConversationState, Question, resultTelegramMessage } from "../types/types";
 import { interpretCallback, interpretCity, interpretCountry } from "./interpretators";
 import { err, ok, Result } from "neverthrow";
 
@@ -108,18 +109,116 @@ private async askForCountry(user: User): Promise<Result<boolean, Error>> {
       return err(new Error("Unexpected state in handleMainMenuState"));
     }
 
-    private async handleFlowState(user: User): Promise<Result<void, Error>> {
-      const { chat_id, conversationState, wrong_answer_count, correct_answer_count, current_correct_answer_id } = user;
+    private async sendQuestion(user: User): Promise<Result<boolean, Error>> {
 
-      if (conversationState === ConversationState.FLOW) {
-        return ok(undefined);
+      const getQuestionImageUrlResult = await getQuestionImageUrl(user.city!);
+      if (getQuestionImageUrlResult.isErr()) {
+        return err(new Error("Failed to get question image url"));
       }
 
-      if (conversationState === ConversationState.MAIN_MENU) {
-        return ok(undefined);
+      console.log("getQuestionImageUrlResult", getQuestionImageUrlResult.value);
+
+      const getQuestionResult = await getQuestion(getQuestionImageUrlResult.value, user.city!);
+      if (getQuestionResult.isErr()) {
+        return err(new Error("Failed to get question"));
       }
 
-      return ok(undefined);
+      console.log("getQuestionResult", getQuestionResult.value);
+
+      // First send the image
+      const photoResult = await sendTelegramPhoto(user.chat_id, getQuestionImageUrlResult.value);
+      if (photoResult.isErr()) {
+        return err(new Error("Failed to send question image"));
+      }
+
+      // Then send the question text with choices
+      const message: resultTelegramMessage = {
+        chat_id: user.chat_id,
+        text: `🔍 ${getQuestionResult.value.question_text}`,
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              { text: getQuestionResult.value.choices[0].text, callback_data: String(getQuestionResult.value.choices[0].id) },
+              { text: getQuestionResult.value.choices[1].text, callback_data: String(getQuestionResult.value.choices[1].id) },
+            ],
+            [
+              { text: getQuestionResult.value.choices[2].text, callback_data: String(getQuestionResult.value.choices[2].id) },
+              { text: getQuestionResult.value.choices[3].text, callback_data: String(getQuestionResult.value.choices[3].id) },
+            ],
+          ],
+        },
+      }
+
+      const result = await sendTelegramMessage(message);
+      if (result.isErr()) {
+        console.log("result", result);
+        return err(new Error("Failed to send question"));
+      }
+
+      // Update current correct answer id
+      const updateCurrentCorrectAnswerIdResult = await updateUserCurrentCorrectAnswerId(user.chat_id, getQuestionResult.value.correct_answer_id.toString());
+      if (updateCurrentCorrectAnswerIdResult.isErr()) {
+        return err(new Error("Failed to update user with current correct answer id"));
+      }
+
+      return ok(true);
+    }
+
+    private async handleFlowState(user: User, user_choice: CallbackAnswer | null): Promise<Result<boolean, Error>> {
+      const { correct_answer_count, wrong_answer_count, current_correct_answer_id } = user;
+
+      if (user_choice === null) {
+        // Send the first question
+        const sendQuestionResult = await this.sendQuestion(user);
+        if (sendQuestionResult.isErr()) {
+          return err(new Error("Failed to send first question"));
+        }
+        return ok(true);
+      }
+
+      console.log("user_choice", user_choice);
+      console.log("current_correct_answer_id", current_correct_answer_id);
+
+      if (current_correct_answer_id === user_choice) {
+        // Got the correct answer
+        const result = await updateUserCorrectAnswerCount(user.chat_id, correct_answer_count + 1);
+        if (result.isErr()) {
+          return err(new Error("Failed to update user correct answer count"));
+        }
+
+        const sendTelegramMessageResult = await sendTelegramMessage({
+          chat_id: user.chat_id,
+          text: `🎉 Correct answer\\! You got it right ${correct_answer_count + 1} times\\!`,
+          parse_mode: "MarkdownV2",
+        });
+        if (sendTelegramMessageResult.isErr()) {
+          return err(new Error("Failed to send message to user that they got the correct answer"));
+        }
+
+      } else {
+        // Got the wrong answer
+        const result = await updateUserWrongAnswerCount(user.chat_id, wrong_answer_count + 1);
+        if (result.isErr()) {
+          return err(new Error("Failed to update user wrong answer count"));
+        }
+
+        const sendTelegramMessageResult = await sendTelegramMessage({
+          chat_id: user.chat_id,
+          text: `❌ Wrong answer\\! You got it wrong ${wrong_answer_count + 1} times\\! The correct answer was ${current_correct_answer_id}`,
+          parse_mode: "MarkdownV2",
+        });
+        if (sendTelegramMessageResult.isErr()) {
+          return err(new Error("Failed to send message to user that they got the wrong answer"));
+        }
+      }
+
+      const sendQuestionResult = await this.sendQuestion(user);
+      if (sendQuestionResult.isErr()) {
+        return err(new Error("Failed to send next question"));
+      }
+
+      return ok(true);
     }
 
     public async handleSpecialCommands(
@@ -178,7 +277,7 @@ private async askForCountry(user: User): Promise<Result<boolean, Error>> {
         case ConversationState.MAIN_MENU:
           return this.handleMainMenuState(userResult.value, user_choice);
         case ConversationState.FLOW:
-          return ok(true);
+          return this.handleFlowState(userResult.value, user_choice);
       }
     }
 }

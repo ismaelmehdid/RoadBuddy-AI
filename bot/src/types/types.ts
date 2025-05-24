@@ -91,3 +91,18 @@ export enum CallbackAnswer {
   D = "D",
   ERROR = "ERROR",
 }
+
+export const ChoiceSchema = z.object({
+  id: z.number(),
+  text: z.string(),
+});
+
+export const QuestionSchema = z.object({
+  question_text: z.string(),
+  correct_answer_id: z.number(),
+  choices: z.array(ChoiceSchema),
+  explanation: z.string(),
+  chat_id: z.string(),
+});
+
+export type Question = z.infer<typeof QuestionSchema>;
