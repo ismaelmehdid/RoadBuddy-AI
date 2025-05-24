@@ -1,5 +1,0 @@
-export default function Page() {
-  return (
-    <h1>This is the page 2</h1>
-  )
-}
