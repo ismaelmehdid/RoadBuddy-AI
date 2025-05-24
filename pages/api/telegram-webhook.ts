@@ -2,7 +2,7 @@
 import { FlowRunner } from '@/flowRunner';
 import { CallbackQuerySchema, InputTelegramMessageSchema } from '@/types/types';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Telegraf } from 'telegraf';
+import { Markup, Telegraf } from 'telegraf';
 
 const token = process.env.TELEGRAM_TOKEN;
 if (!token) {
