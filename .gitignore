@@ -1,0 +1,10 @@
+# Env files
+.env*
+
+# Dependencies
+bot/node_modules/
+
+# IDEs
+.vscode/*
+.idea/*
+.cursor/*
