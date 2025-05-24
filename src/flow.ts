@@ -1,26 +1,21 @@
-import { createUser, getUserByChatId, User } from "./server/db/user";
-import { ConversationState } from "./types/types";
+import { getOrCreateUser, User } from "./server/db/user";
+import { ConversationState, TelegramMessage } from "./types/types";
 import { err, ok, Result } from "neverthrow";
-
-interface Message {
-  chat_id: string;
-  user_id: number;
-  message: string; // Should be an event type
-}
 
 export class FlowRunner {
 
     constructor() {
     }
 
-    public async startFlow(message: Message): Promise<Result<void, Error>> {
-      const createUserResult = await createUser({ chat_id: message.chat_id });
+    // New conversation means user not found so we are creating a new user
+    public async newConversation(message: TelegramMessage): Promise<Result<User, Error>> {
+      const createUserResult = await getOrCreateUser(message.chat.id);
       if (createUserResult.isErr()) {
         return err(new Error("User not created"));
       }
-      return ok(undefined);
+      return ok(createUserResult.value);
     }
-    
+
     private async handleUnspecifiedState(chat_id: string): Promise<Result<void, Error>> {
       const userResult = await getUserByChatId(chat_id);
       if (userResult.isErr()) {
@@ -29,11 +24,14 @@ export class FlowRunner {
       return ok(undefined);
     }
 
-    private async handleMainMenuState(chat_id: string): Promise<Result<void, Error>> {
-      const userResult = await getUserByChatId(chat_id);
-      if (userResult.isErr()) {
-        return err(new Error("User not found"));
-      }
+    private async handleMainMenuState(user: User): Promise<Result<void, Error>> {
+      // Check if we have city in db
+      // If not, ask for city
+      // If yes, ask for country
+      // If country is not France, ask for country
+
+
+
       return ok(undefined);
     }
 
@@ -51,23 +49,17 @@ export class FlowRunner {
       return ok(undefined);
     }
 
-    public async run(message: Message): Promise<Result<void, Error>> {
-      const userResult = await getUserByChatId(message.chat_id);
-      if (userResult.isErr()) { // means user not found
-        return this.startFlow(message);
+    public async run(message: TelegramMessage): Promise<Result<boolean, Error>> {
+      const userResult = await getOrCreateUser(message.chat.id);
+      if (userResult.isErr()) {
+        return err(new Error("Could not get user by chat_id"));
       }
 
       switch (userResult.value.conversationState) {
         case ConversationState.MAIN_MENU:
-          
-          return ok(undefined);
+          return this.handleMainMenuState();
         case ConversationState.FLOW:
-
-
+          return ok(true);
       }
-
-      const user = userResult.value;
-
-      return ok(undefined);
     }
 }

@@ -3,7 +3,7 @@ import { ConversationState } from "../types/types";
 
 export const userSchema = z.object({
   id: z.number(),
-  chat_id: z.string().length(15),
+  chat_id: z.number(),
   conversationState: z.nativeEnum(ConversationState).default(ConversationState.UNSPECIFIED),
   wrong_answer_count: z.number().nullable().default(0),
   correct_answer_count: z.number().nullable().default(0),

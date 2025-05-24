@@ -1,7 +1,6 @@
 import { z } from "zod";
 
 export enum ConversationState {
-  UNSPECIFIED = "UNSPECIFIED",
   MAIN_MENU = "MAIN_MENU",
   FLOW = "FLOW",
 }
