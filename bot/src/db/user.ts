@@ -83,6 +83,8 @@ export async function setUserToMainMenu(user: User): Promise<Result<boolean, Err
         wrong_answer_count: 0,
         correct_answer_count: 0,
         current_correct_answer_id: '',
+        city: null,
+        country: null,
       })
       .where(eq(usersTable.chat_id, user.chat_id));
 

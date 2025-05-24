@@ -52,9 +52,12 @@ bot.on('text', async (ctx) => {
     return ctx.reply('Invalid message format');
   }
 
-  console.log('Message:', message.data);
-
-  const result = await flowRunner.run(message.data.chat.id, null);
+  let result;
+    if (message.data.text === '/back_to_main_menu' || message.data.text === '/show_score') {
+        result = await flowRunner.handleSpecialCommands(message.data.chat.id, message.data.text);
+    } else {
+        result = await flowRunner.run(message.data.chat.id, null);
+    }
 
   if (result.isErr()) {
     console.error('Error processing message:', result.error);

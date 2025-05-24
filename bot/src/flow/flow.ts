@@ -1,8 +1,8 @@
-import { interpretCallback, interpretCity, interpretCountry } from "./interpretators";
-import { getOrCreateUser, setUserToFlow, updateUser, User } from "../db/user";
+import { getOrCreateUser, setUserToFlow, setUserToMainMenu, updateUser, User } from "../db/user";
 import { sendTelegramMessage } from "../telegram_interactions/interactions";
 import { message_templates } from "../types/message_templates";
 import { CallbackAnswer, ConversationState, resultTelegramMessage } from "../types/types";
+import { interpretCallback, interpretCity, interpretCountry } from "./interpretators";
 import { err, ok, Result } from "neverthrow";
 
 export class FlowRunner {
@@ -73,7 +73,7 @@ private async askForCountry(user: User): Promise<Result<boolean, Error>> {
         return err(new Error("User is not in MAIN_MENU state"));
       }
       let userToProccess = user;
-    
+
       if (callback !== null) {
         const update = await updateUser(user, interpretCity(callback), interpretCountry(callback));
         if (update.isErr()) {
@@ -120,6 +120,47 @@ private async askForCountry(user: User): Promise<Result<boolean, Error>> {
       }
 
       return ok(undefined);
+    }
+
+    public async handleSpecialCommands(
+      chat_id: number,
+      specialCommand: '/back_to_main_menu' | '/show_score',
+    ): Promise<Result<boolean, Error>> {
+      const userResult = await getOrCreateUser(chat_id);
+      if (userResult.isErr()) {
+        return err(new Error("Could not get user by chat_id"));
+      }
+
+      const user = userResult.value;
+      if (specialCommand === '/back_to_main_menu') {
+        const result = await setUserToMainMenu(user);
+        if (result.isErr()) {
+          return err(new Error("Failed to set user to MAIN_MENU state"));
+        }
+        this.askForCountry(user);
+        return ok(true);
+      } else if (specialCommand === '/show_score') {
+        this.showScore(user);
+        return ok(true);
+      }
+      return err(new Error("Unknown special command"));
+    }
+
+    private async showScore(user: User): Promise<Result<boolean, Error>> {
+      const scoreMessage = message_templates.score
+        .replace("{correct_answer_count}", user.correct_answer_count.toString())
+        .replace("{wrong_answer_count}", user.wrong_answer_count.toString())
+
+      const message: resultTelegramMessage = {
+        chat_id: user.chat_id,
+        text: scoreMessage,
+        parse_mode: "MarkdownV2",
+      }
+      const result = await sendTelegramMessage(message);
+      if (result.isErr()) {
+        return err(new Error("Failed to send score message"));
+      }
+      return ok(true);
     }
 
     public async run(chat_id: number, callback: string | null): Promise<Result<boolean, Error>> {

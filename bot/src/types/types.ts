@@ -45,7 +45,7 @@ const SendMessageWithInlineSchema = z.object({
   chat_id: z.number(),
   text: z.string(),
   parse_mode: z.string().optional(),
-  reply_markup: InlineKeyboardMarkupSchema,
+  reply_markup: InlineKeyboardMarkupSchema.optional(),
 });
 
 export type resultTelegramMessage = z.infer<typeof SendMessageWithInlineSchema>;
