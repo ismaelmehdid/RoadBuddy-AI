@@ -22,8 +22,8 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 1. **Clone the repo**
 
    ```bash
-   git clone https://github.com/yvann-ba/roadbuddy-ai
-   cd roadbuddy-ai
+   git clone https://github.com/yvann-ba/RoadBuddy-AI
+   cd RoadBuddy-AI
    ```
 
 ## Roadmap
