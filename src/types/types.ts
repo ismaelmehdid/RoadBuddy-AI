@@ -2,5 +2,12 @@ export enum ConversationState {
   UNSPECIFIED = "UNSPECIFIED",
   MAIN_MENU = "MAIN_MENU",
   FLOW = "FLOW",
-  STOPPED = "STOPPED"
+}
+
+export enum Countries {
+    FRANCE = "FRANCE",
+}
+
+export enum City {
+    PARIS = "PARIS",
 }

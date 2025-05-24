@@ -16,7 +16,7 @@ export const conversationState = pgEnum(
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  phone_number: varchar("phone_number", { length: 15 }).notNull(),
+  chat_id: varchar("chat_id", { length: 15 }).notNull(),
   conversationState: conversationState('conversationState').default(
       ConversationState.UNSPECIFIED,
     ),
