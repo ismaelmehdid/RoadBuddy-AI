@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "question_gen_api"
+version = "0.1.0"
+description = "Implements the Api to send an image of a road part and receiving a set of questions"
+authors = [
+    {name = "Jan Matter", email = "jan.matter@outlook.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "requests==2.32.3"
+]
+
+[tool.setuptools]
+packages = ["api", "clients", "shared"]
+
+[project.optional-dependencies]
+dev = []

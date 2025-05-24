@@ -1,0 +1,1 @@
+MISTRAL_BASE_URL = "https://api.mistral.ai/v1"
