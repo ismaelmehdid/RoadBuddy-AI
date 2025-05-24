@@ -4,38 +4,28 @@ import logging
 from typing import Dict
 
 from shared.constants import APIEndpoints
-from controllers.driving_exam_chat_contoller import DrivingExamChatController
-from api.schemas.exam_chat import ExamChatRequestBody, ExamChatResponseBody
+from controllers.street_image_controller import StreetImageController
+from api.schemas.street_image import StreetImageRequestBody, StreetImageResponseBody
 
 
 class StreetImageRoute:
 
-    def __init__(self, driving_exam_chat_controller: DrivingExamChatController, logger: Optional[logging.Logger]) -> None:
-        self._driving_exam_chat_controller = driving_exam_chat_controller
+    def __init__(self, street_image_controller: StreetImageController, logger: Optional[logging.Logger]) -> None:
+        self._street_image_controller = street_image_controller
         self._logger = logger or logging.getLogger(__name__)
     
     def add_api_routes(self, router: APIRouter) -> None:
-        router.add_api_route(APIEndpoints.EXAM_CHAT.value, self.post, methods=['POST'])
+        router.add_api_route(APIEndpoints.STREET_IMAGE.value, self.post, methods=['POST'])
     
-    async def post(self, body: ExamChatRequestBody) -> ExamChatResponseBody:
-        self._logger.info(f"Received request for exam chat.")
+    async def post(self, body: StreetImageRequestBody) -> StreetImageResponseBody:
+        self._logger.info(f"Received request for street image.")
 
-        chat_id, results = self._driving_exam_chat_controller.generate_driving_questions_for_image(
-            image_url=body.image_url,
-            city=body.city
+        image_url = self._street_image_controller.get_street_image_url(
+            city=body.city,
         )
 
-        result_body = ExamChatResponseBody(
-            image_url=body.image_url,
-            correct_answer_id=int(results["correct_answer"]),
-            question_text=results["question"],
-            choices=[{
-                "id": i,
-                "text": text
-            } for i, text in enumerate(results["answers"], start=1)
-            ],
-            explanation=results["explanation"],
-            chat_id=chat_id
+        result_body = StreetImageResponseBody(
+            image_url=image_url,
         )
-        self._logger.info(f"Generated exam chat results")
+        self._logger.info(f"Generated street image results")
         return result_body
