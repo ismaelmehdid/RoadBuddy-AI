@@ -168,7 +168,7 @@ export class FlowRunner {
       }
 
       // Update current correct answer id
-      const updateCurrentCorrectAnswerIdResult = await updateUserCurrentCorrectAnswerId(user.chat_id, getQuestionResult.value.correct_answer_id.toString());
+      const updateCurrentCorrectAnswerIdResult = await updateUserCurrentCorrectAnswerId(user.chat_id, getQuestionResult.value.correct_answer_id);
       if (updateCurrentCorrectAnswerIdResult.isErr()) {
         return err(new Error("Failed to update user with current correct answer id"));
       }
@@ -196,7 +196,7 @@ export class FlowRunner {
       console.log("user_choice", user_choice);
       console.log("current_correct_answer_id", current_correct_answer_id);
 
-      if (current_correct_answer_id === user_choice) {
+      if (current_correct_answer_id === user_choice.toString()) {
         // Got the correct answer
         const result = await updateUserCorrectAnswerCount(user.chat_id, correct_answer_count + 1);
         if (result.isErr()) {
