@@ -17,6 +17,14 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 - **Backend**: Express on TypeScript
 - **Storage**: PostgreSQL DB
 
+![image](https://github.com/user-attachments/assets/0135a9df-ed87-46c6-b666-4fa49fc743f7)
+
+<img width="400" alt="Screenshot_2025-05-25_at_11 07 17-3" src="https://github.com/user-attachments/assets/fa16db81-f685-4cfb-b06b-1008de17fb9e" />
+
+
+
+
+
 ## Dependencies
 
    - Docker
