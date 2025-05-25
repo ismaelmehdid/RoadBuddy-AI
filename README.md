@@ -1,5 +1,7 @@
 # RoadBuddy AI
 
+Take a look of the project: https://www.loom.com/share/e4cdc5b60a3949c2bf5c32bf5caca297
+
 A Telegram chatbot that teaches driving theory with real street photos from your own city, one quick quiz at a time.
 
 ## Features
@@ -19,17 +21,6 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 
 ## Architecture explanation
 ![image](https://github.com/user-attachments/assets/0135a9df-ed87-46c6-b666-4fa49fc743f7)
-
-
-## Try it now!
-> ⚠️ **Warning:** This Telegram bot is an MVP and may make mistakes in its answers. It uses very simple and cheap Mistral 12B model FOR NOW.
-
-<div style="text-align: center;">
-  <img width="400" src="https://github.com/user-attachments/assets/fa16db81-f685-4cfb-b06b-1008de17fb9e" />
-</div>
-
-[OR USE THIS URL](https://t.me/road_buddy_ai_bot)
-
 
 ## Dependencies
 
