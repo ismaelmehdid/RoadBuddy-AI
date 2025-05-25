@@ -59,7 +59,7 @@ def create_app(
         logger=logger
     )
 
-    street_image_controller = StreetImageController(api_token=mapillary_token)
+    #street_image_controller = StreetImageController(api_token=mapillary_token)
 
     similarity_search_controller = SimilaritySearchController(
         index_url=index_url,
@@ -78,7 +78,7 @@ def create_app(
     exam_chat_route.add_api_routes(router)
     logger.info("Added exam question chat routes")
 
-    exam_chat_route = StreetImageRoute(street_image_controller, logger)
+    exam_chat_route = StreetImageRoute(logger)
     logger.info("Adding street image routes")
     exam_chat_route.add_api_routes(router)
     logger.info("Added street image routes")
