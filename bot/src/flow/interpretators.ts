@@ -6,7 +6,7 @@ export function interpretCallback(
       switch (callback) {
         case "FRANCE":
           return CallbackAnswer.FRANCE;
-        case "PARIS":
+        case "Paris":
           return CallbackAnswer.PARIS;
         case "A":
           return CallbackAnswer.A;

@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import { Pool } from 'pg';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { migrate } from 'drizzle-orm/node-postgres/migrator';
+import { sendTelegramMessage } from './telegram_interactions/interactions';
+import { message_templates } from './types/message_templates';
 
 // Load environment variables
 dotenv.config();
@@ -68,8 +70,13 @@ bot.on('text', async (ctx) => {
 // Handle callback queries
 bot.on('callback_query', async (ctx) => {
   const callbackQuery = ctx.callbackQuery;
-  
   console.log('Received callback query:', callbackQuery);
+
+  try {
+    await ctx.answerCbQuery('Processing...');
+  } catch (err) {
+    console.warn('Failed to answer callback query in time:', err);
+  }
 
   const message = CallbackQuerySchema.safeParse(callbackQuery);
   if (!message.success) {
@@ -84,7 +91,6 @@ bot.on('callback_query', async (ctx) => {
     console.error('Error processing message:', result.error);
     return ctx.reply('Error processing your request.');
   }
-  ctx.answerCbQuery('Processing your request...');
 });
 
 // Set up webhook

@@ -47,7 +47,7 @@ export class FlowRunner {
           [
             {
               text: "Paris",
-              callback_data: "PARIS"
+              callback_data: "Paris"
             }
           ],
         ]
@@ -96,7 +96,14 @@ export class FlowRunner {
         if (result.isErr()) {
           return err(new Error("Failed to set user to FLOW state"));
         }
-        const flowResult = await this.sendQuestion(userToProccess);
+        await sendTelegramMessage({
+            chat_id: user.chat_id,
+            text: message_templates.proccesing_message,
+            parse_mode: 'MarkdownV2',
+          });
+        let flowUser = userToProccess;
+        flowUser.conversationState = ConversationState.FLOW;
+        const flowResult = await this.handleFlow(userToProccess);
         if (flowResult.isErr()) {
           return err(new Error("Failed to start flow"));
         }
@@ -105,7 +112,7 @@ export class FlowRunner {
       return err(new Error("Unexpected state in handleMainMenuState"));
     }
 
-    private async sendQuestion(user: User): Promise<Result<boolean, Error>> {
+    private async handleFlow(user: User): Promise<Result<boolean, Error>> {
 
       const getQuestionImageUrlResult = await getQuestionImageUrl(user.city!);
       if (getQuestionImageUrlResult.isErr()) {
@@ -172,7 +179,12 @@ export class FlowRunner {
 
       if (user_choice === null) {
         // Send the first question
-        const sendQuestionResult = await this.sendQuestion(user);
+          await sendTelegramMessage({
+            chat_id: user.chat_id,
+            text: message_templates.proccesing_message,
+            parse_mode: 'MarkdownV2',
+          });
+        const sendQuestionResult = await this.handleFlow(user);
         if (sendQuestionResult.isErr()) {
           return err(new Error("Failed to send first question"));
         }
@@ -191,12 +203,17 @@ export class FlowRunner {
 
         const sendTelegramMessageResult = await sendTelegramMessage({
           chat_id: user.chat_id,
-          text: `🎉 Correct answer\\! You got it right ${correct_answer_count + 1} times\\!`,
+          text: `🎉 Correct answer! You got it right ${correct_answer_count + 1} times!`,
           parse_mode: "MarkdownV2",
         });
         if (sendTelegramMessageResult.isErr()) {
           return err(new Error("Failed to send message to user that they got the correct answer"));
         }
+        await sendTelegramMessage({
+            chat_id: user.chat_id,
+            text: message_templates.proccesing_message,
+            parse_mode: 'MarkdownV2',
+          });
 
       } else {
         // Got the wrong answer
@@ -207,15 +224,20 @@ export class FlowRunner {
 
         const sendTelegramMessageResult = await sendTelegramMessage({
           chat_id: user.chat_id,
-          text: `❌ Wrong answer\\! You got it wrong ${wrong_answer_count + 1} times\\! The correct answer was ${current_correct_answer_id}`,
+          text: `❌ Wrong answer! You got it wrong ${wrong_answer_count + 1} times! The correct answer was ${current_correct_answer_id}`,
           parse_mode: "MarkdownV2",
         });
         if (sendTelegramMessageResult.isErr()) {
           return err(new Error("Failed to send message to user that they got the wrong answer"));
         }
+        await sendTelegramMessage({
+            chat_id: user.chat_id,
+            text: message_templates.proccesing_message,
+            parse_mode: 'MarkdownV2',
+          });
       }
 
-      const sendQuestionResult = await this.sendQuestion(user);
+      const sendQuestionResult = await this.handleFlow(user);
       if (sendQuestionResult.isErr()) {
         return err(new Error("Failed to send next question"));
       }

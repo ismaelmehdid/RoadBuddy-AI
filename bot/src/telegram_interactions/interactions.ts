@@ -1,6 +1,18 @@
 import { resultTelegramMessage } from '../types/types';
 import { err, ok, Result } from 'neverthrow'
 
+
+function escapeMarkdownV2(text: string): string {
+  return text.replace(/[_[\]()~`>#+=|{}.!\\-]/g, (match) => '\\' + match);
+}
+
+function validMessage(message: resultTelegramMessage): resultTelegramMessage {
+  return {
+    ...message,
+    text: escapeMarkdownV2(message.text),
+  };
+}
+
 export async function sendTelegramMessage(message: resultTelegramMessage): Promise<Result<boolean, Error>> {
   const token = process.env.TELEGRAM_TOKEN;
   if (!token) {
@@ -8,10 +20,11 @@ export async function sendTelegramMessage(message: resultTelegramMessage): Promi
     return err(new Error('TELEGRAM_TOKEN not set'));
   }
 
+
   const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(message ),
+    body: JSON.stringify(validMessage(message)),
   });
 
   const data = await response.json();

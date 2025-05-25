@@ -30,7 +30,7 @@ export async function getQuestion(image_url: string, city: City): Promise<Result
     },
     body: JSON.stringify({
       image_url: image_url,
-      city: "Paris", //TODO: Use city from user
+      city: city,
     }),
   });
   if (!response.ok) {

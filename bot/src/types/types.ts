@@ -11,7 +11,7 @@ export enum Countries {
 }
 
 export enum City {
-    PARIS = "PARIS",
+    PARIS = "Paris",
     ERROR = "ERROR",
 }
 
@@ -84,7 +84,7 @@ export type inputButtonMessage = z.infer<typeof CallbackQuerySchema>;
 
 export enum CallbackAnswer {
   FRANCE = "FRANCE",
-  PARIS = "PARIS",
+  PARIS = "Paris",
   A = "A",
   B = "B",
   C = "C",
