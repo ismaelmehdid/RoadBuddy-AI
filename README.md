@@ -17,6 +17,18 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 - **Backend**: Express on TypeScript
 - **Storage**: PostgreSQL DB
 
+## Architecture explanation
+![image](https://github.com/user-attachments/assets/0135a9df-ed87-46c6-b666-4fa49fc743f7)
+
+
+## Try it now!
+<div style="text-align: center;">
+  <img width="400" src="https://github.com/user-attachments/assets/fa16db81-f685-4cfb-b06b-1008de17fb9e" />
+</div>
+
+[OR USE THIS URL](https://t.me/road_buddy_ai_bot)
+
+
 ## Dependencies
 
    - Docker
@@ -24,11 +36,14 @@ A Telegram chatbot that teaches driving theory with real street photos from your
      
 ## Getting Started
 
-1. **Clone the repo**
+1. **Clone the repo and run these commands**
 
    ```bash
    git clone https://github.com/yvann-ba/RoadBuddy-AI
    cd RoadBuddy-AI
+   cd bot/
+   npm i
+   cd ..
    ```
 2. **Setup ngrok**
    ```bash
@@ -38,19 +53,15 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 
    Copy your URL to setup env
 
-3. **Ask me to get TELEGRAM_TOKEN or create your own**
-
-   It’s better to use our existing [bot](https://t.me/road_buddy_ai_bot) since it already has an avatar, description, and other details. If you create your own bot, it will be fully functional but will appear as a blank bot.
-   
-   For any questions or assistance, feel free to reach out to me:
-   - **LinkedIn**: [Andrii Syvash](https://www.linkedin.com/in/asyvash/)
-   - **Email**: [asyvash.work.it@gmail.com](mailto:asyvash.work.it@gmail.com)
-   
-   To create your own bot, simply follow these steps:
+3. **To create your own bot, simply follow these steps**
    1. Message [@BotFather](https://t.me/BotFather) on Telegram with the command **/newbot**.
    2. Follow the prompts to provide the necessary information.
    3. Once done, you’ll receive a token like this: `7899634355:AAH21k1iAJuw4UyCLBXQo80zkvuqJ0f89WQ` (note: this is just an example and not real data).
-  
+
+   For any questions or assistance, feel free to reach out to me:
+      - **LinkedIn**: [Andrii Syvash](https://www.linkedin.com/in/asyvash/)
+      - **Email**: [asyvash.work.it@gmail.com](mailto:asyvash.work.it@gmail.com)
+     
 3. **Create .env file using this template**
 
    ```bash
@@ -77,3 +88,9 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 
    - We can limit daily messages to 10. After that, users will need to purchase a subscription.
    - A perfect solution for passing the driving exam, as you will practice with real images from your city.
+
+## Team:
+[Andrii Syvash](https://www.linkedin.com/in/asyvash/)<br>
+[Ismael Mehdid](https://www.linkedin.com/in/ismaelmehdid/)<br>
+[Jan Matter](https://www.linkedin.com/in/jan-matter-855aa4191/)<br>
+[Yvann Barbot](https://www.linkedin.com/in/yvann-barbot/)
