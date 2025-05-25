@@ -93,13 +93,13 @@ export enum CallbackAnswer {
 }
 
 export const ChoiceSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   text: z.string(),
 });
 
 export const QuestionSchema = z.object({
   question_text: z.string(),
-  correct_answer_id: z.number(),
+  correct_answer_id: z.string(),
   choices: z.array(ChoiceSchema),
   explanation: z.string(),
   chat_id: z.string(),

@@ -11,29 +11,29 @@ export class FlowRunner {
     constructor() {
     }
     
-private async askForCountry(user: User): Promise<Result<boolean, Error>> {
-    const message: resultTelegramMessage = {
-      chat_id: user.chat_id,
-      text: message_templates.welcome_and_country,
-      parse_mode: "MarkdownV2",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "🇫🇷 France",
-              callback_data: "FRANCE"
-            }
-          ],
-        ]
+    private async askForCountry(user: User): Promise<Result<boolean, Error>> {
+      const message: resultTelegramMessage = {
+        chat_id: user.chat_id,
+        text: message_templates.welcome_and_country,
+        parse_mode: "MarkdownV2",
+        reply_markup: {
+          inline_keyboard: [
+            [
+              {
+                text: "🇫🇷 France",
+                callback_data: "FRANCE"
+              }
+            ],
+          ]
+        }
+      };
+
+      const result = await sendTelegramMessage(message);
+      if (result.isErr()) {
+        return err(new Error("Failed to send message asking for country"));
       }
-    };
 
-    const result = await sendTelegramMessage(message);
-    if (result.isErr()) {
-      return err(new Error("Failed to send message asking for country"));
-    }
-
-    return ok(true);
+      return ok(true);
   }
 
 
@@ -60,10 +60,6 @@ private async askForCountry(user: User): Promise<Result<boolean, Error>> {
     }
 
     return ok(true);
-    }
-
-    private async startFlow(user: User): Promise<Result<boolean, Error>> {
-      return ok(true);
     }
 
     private async handleMainMenuState(
@@ -100,7 +96,7 @@ private async askForCountry(user: User): Promise<Result<boolean, Error>> {
         if (result.isErr()) {
           return err(new Error("Failed to set user to FLOW state"));
         }
-        const flowResult = await this.startFlow(userToProccess);
+        const flowResult = await this.sendQuestion(userToProccess);
         if (flowResult.isErr()) {
           return err(new Error("Failed to start flow"));
         }
@@ -132,19 +128,25 @@ private async askForCountry(user: User): Promise<Result<boolean, Error>> {
       }
 
       // Then send the question text with choices
+        const questionMessage = message_templates.question
+        .replace("{question_text}", getQuestionResult.value.question_text)
+        .replace("{choice_a}", getQuestionResult.value.choices[0].text)
+        .replace("{choice_b}", getQuestionResult.value.choices[1].text)
+        .replace("{choice_c}", getQuestionResult.value.choices[2].text)
+        .replace("{choice_d}", getQuestionResult.value.choices[3].text)
       const message: resultTelegramMessage = {
         chat_id: user.chat_id,
-        text: `🔍 ${getQuestionResult.value.question_text}`,
+        text: questionMessage,
         parse_mode: "MarkdownV2",
         reply_markup: {
           inline_keyboard: [
             [
-              { text: getQuestionResult.value.choices[0].text, callback_data: String(getQuestionResult.value.choices[0].id) },
-              { text: getQuestionResult.value.choices[1].text, callback_data: String(getQuestionResult.value.choices[1].id) },
+              { text: 'A', callback_data: getQuestionResult.value.choices[0].id},
+              { text: 'B', callback_data: getQuestionResult.value.choices[1].id},
             ],
             [
-              { text: getQuestionResult.value.choices[2].text, callback_data: String(getQuestionResult.value.choices[2].id) },
-              { text: getQuestionResult.value.choices[3].text, callback_data: String(getQuestionResult.value.choices[3].id) },
+              { text: 'C', callback_data: getQuestionResult.value.choices[2].id},
+              { text: 'D', callback_data: getQuestionResult.value.choices[3].id},
             ],
           ],
         },

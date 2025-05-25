@@ -1,8 +1,10 @@
 import { err, ok, Result } from 'neverthrow';
 import { db } from '../index';
 import { usersTable } from './schema';
-import { City, ConversationState, Countries } from '../types/types';
+import { City, ConversationState, Countries, resultTelegramMessage } from '../types/types';
 import { eq } from 'drizzle-orm';
+import { sendTelegramMessage } from '../telegram_interactions/interactions';
+import { message_templates } from '../types/message_templates';
 
 export interface User {
   chat_id: number;
