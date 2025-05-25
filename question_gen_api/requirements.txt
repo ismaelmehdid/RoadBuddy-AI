@@ -4,3 +4,4 @@ boto3== 1.38.23
 mistralai==1.7.1
 fastapi==0.115.12
 mangum==0.19.0
+upstash-vector==0.8.0

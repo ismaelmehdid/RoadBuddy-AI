@@ -12,8 +12,14 @@ class APIEndpoints(Enum):
     EXAM_CHAT = "/api/v1/exam-chat"
     EXAM_CHAT_QUESTION = "/api/v1/exam-chat-question"
     STREET_IMAGE = "/api/v1/street-image"
+    SIMILARITY_SEARCH = "/api/v1/similarity-search"
 
-
+ExamAnswerMapping = {
+    1: "A",
+    2: "B",
+    3: "C",
+    4: "D"
+}
 
 #OpenStreetMap constants
 PREFERRED_CAMERA_MAKES = [

@@ -3,7 +3,7 @@ from typing import Optional
 import logging
 from typing import Dict
 
-from shared.constants import APIEndpoints
+from shared.constants import APIEndpoints, ExamAnswerMapping
 from controllers.driving_exam_chat_contoller import DrivingExamChatController
 from api.schemas.exam_chat import ExamChatRequestBody, ExamChatResponseBody
 
@@ -27,10 +27,10 @@ class ExamChatRoute:
 
         result_body = ExamChatResponseBody(
             image_url=body.image_url,
-            correct_answer_id=int(results["correct_answer"]),
             question_text=results["question"],
+            correct_answer_id=ExamAnswerMapping.get(int(results["correct_answer"])),
             choices=[{
-                "id": i,
+                "id": ExamAnswerMapping.get(i),
                 "text": text
             } for i, text in enumerate(results["answers"], start=1)
             ],
