@@ -247,11 +247,15 @@ Explanation: ${user.explanation}`,
             parse_mode: 'MarkdownV2',
           });
       }
+      let sendQuestionResult = await this.handleFlow(user);
 
-      const sendQuestionResult = await this.handleFlow(user);
-      if (sendQuestionResult.isErr()) {
-        return err(new Error("Failed to send next question"));
-      }
+      while (sendQuestionResult.isErr()) {
+        console.error("Error sending next question:", sendQuestionResult.error);
+
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        sendQuestionResult = await this.handleFlow(user);
+    }
 
       return ok(true);
     }
