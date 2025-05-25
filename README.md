@@ -85,3 +85,9 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 
    - We can limit daily messages to 10. After that, users will need to purchase a subscription.
    - A perfect solution for passing the driving exam, as you will practice with real images from your city.
+
+## Team:
+[Andrii Syvash](https://www.linkedin.com/in/asyvash/)<br>
+[Ismael Mehdid](https://www.linkedin.com/in/ismaelmehdid/)<br>
+[Jan Matter](https://www.linkedin.com/in/jan-matter-855aa4191/)<br>
+[Yvann Barbot](https://www.linkedin.com/in/yvann-barbot/)
