@@ -40,7 +40,7 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 
 3. **Ask me to get TELEGRAM_TOKEN or create your own**
 
-   It’s better to use our existing bot since it already has an avatar, description, and other details. If you create your own bot, it will be fully functional but will appear as a blank bot.
+   It’s better to use our existing [bot](https://t.me/road_buddy_ai_bot)since it already has an avatar, description, and other details. If you create your own bot, it will be fully functional but will appear as a blank bot.
    
    For any questions or assistance, feel free to reach out to me:
    - **LinkedIn**: [Andrii Syvash](https://www.linkedin.com/in/asyvash/)
