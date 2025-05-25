@@ -19,7 +19,7 @@ export const InputTelegramMessageSchema = z.object({
   message_id: z.number().optional(),
   from: z.object({
     id: z.number(),
-    first_name: z.string(),
+    first_name: z.string().optional(),
     username: z.string().optional(),
   }),
   chat: z.object({
@@ -54,7 +54,7 @@ const UserSchema = z.object({
   id: z.number(),
   is_bot: z.boolean(),
   first_name: z.string(),
-  username: z.string(),
+  username: z.string().optional(),
   language_code: z.string().optional(),
 });
 
@@ -64,7 +64,7 @@ const MessageSchema = z.object({
   chat: z.object({
     id: z.number(),
     first_name: z.string(),
-    username: z.string(),
+    username: z.string().optional(),
     type: z.enum(['private', 'group', 'supergroup', 'channel']),
   }),
   date: z.number(),
