@@ -10,9 +10,11 @@ from clients.s3_client import AWSS3Client
 from clients.role_assumer_client import AWSRoleAssumer
 from controllers.driving_exam_chat_contoller import DrivingExamChatController
 from controllers.street_image_controller import StreetImageController
+from controllers.similarity_search_controller import SimilaritySearchController
 from api.routes.exam_chat import ExamChatRoute
 from api.routes.exam_chat_question import ExamChatQuestionRoute
 from api.routes.street_image import StreetImageRoute
+from api.routes.similarity_search import SimilaritySearchRoute
 from api.routes.liveness import LivenessRoute
 from shared.constants import (
     APIEndpoints,
@@ -26,6 +28,8 @@ def create_app(
     s3_client: AWSS3Client,
     mistral_client: Mistral,
     mapillary_token: str,
+    index_url: str,
+    index_token: str,
     env: str='prod'
     ) -> FastAPI:
     
@@ -57,6 +61,13 @@ def create_app(
 
     street_image_controller = StreetImageController(api_token=mapillary_token)
 
+    similarity_search_controller = SimilaritySearchController(
+        index_url=index_url,
+        api_key=index_token,
+        mistral_client=mistral_client,
+        logger=logger,
+    )
+
     exam_chat_route = ExamChatRoute(driving_exam_chat_controller, logger)
     logger.info("Adding exam chat routes")
     exam_chat_route.add_api_routes(router)
@@ -71,6 +82,11 @@ def create_app(
     logger.info("Adding street image routes")
     exam_chat_route.add_api_routes(router)
     logger.info("Added street image routes")
+
+    exam_chat_route = SimilaritySearchRoute(similarity_search_controller, driving_exam_chat_controller, logger)
+    logger.info("Adding similariy search routes")
+    exam_chat_route.add_api_routes(router)
+    logger.info("Added similariy search routes")
     
 
     liveness_route = LivenessRoute()
@@ -88,6 +104,8 @@ ENV = os.getenv("ENV", "prod")
 
 mapillary_token = os.getenv("MAPILLARY_TOKEN")
 mistral_api_key = os.getenv("MISTRAL_API_KEY")
+index_url = os.getenv("VECTOR_DB_ENDPOINT", None)
+index_token = os.getenv("VECTOR_DB_API_KEY", None)
 mistral_client = Mistral(api_key=mistral_api_key)
 
 role_arn = os.getenv("AWS_ROLE_ARN", None)
@@ -111,6 +129,8 @@ try:
         s3_client=s3_client,
         mistral_client=mistral_client,
         mapillary_token=mapillary_token,
+        index_url=index_url,
+        index_token=index_token,
         env=ENV
         )
 except Exception as e:

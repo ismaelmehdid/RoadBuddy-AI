@@ -57,11 +57,21 @@ class DrivingExamChatController:
 
         try:
             question_parsed = json.loads('{' + response.model_dump()["choices"][0]["message"]["content"].split('{')[1].split('}')[0] + '}')
+            correct_answer = question_parsed.get("correct_answer", 1)
+            try:
+                correct_answer = int(correct_answer)
+            except ValueError:
+                #lookup index of correct answer in answers list
+                answers = question_parsed.get("answers", [])
+                if correct_answer in answers:
+                    correct_answer = answers.index(correct_answer)
+                if correct_answer == -1:
+                    correct_answer = 1
             result = {
                 "question": question_parsed.get("question", ""),
                 "answers": question_parsed.get("answers", []),
                 "explanation": question_parsed.get("explanation", ""),
-                "correct_answer": question_parsed.get("correct_answer", ""),
+                "correct_answer": correct_answer,
 
             }
         except json.JSONDecodeError as e:
