@@ -22,6 +22,8 @@ A Telegram chatbot that teaches driving theory with real street photos from your
 
 
 ## Try it now!
+> ⚠️ **Warning:** This Telegram bot is an MVP and may make mistakes in its answers. It uses very simple and cheap AI models FOR NOW.
+
 <div style="text-align: center;">
   <img width="400" src="https://github.com/user-attachments/assets/fa16db81-f685-4cfb-b06b-1008de17fb9e" />
 </div>
