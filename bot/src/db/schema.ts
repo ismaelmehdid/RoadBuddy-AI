@@ -1,3 +1,4 @@
+import { text } from "body-parser";
 import { City, ConversationState, Countries } from "../types/types";
 import { bigint, integer, pgEnum, pgTable, varchar } from "drizzle-orm/pg-core";
 
@@ -33,4 +34,5 @@ export const usersTable = pgTable("users", {
   current_correct_answer_id: varchar("current_correct_answer_id", { length: 1 }).default(''),
   city: userCity('city'),
   country: userCountry('country'),
+  explanation: varchar("explanation", { length: 2048 }).default(''),
 });

@@ -13,8 +13,8 @@ I will help you master driving rules 🌍
   score: `
 🏆 **Your Score**
 
-  **Correct Answers**: {correct_answer_count}
-  **Wrong Answers**: {wrong_answer_count}
+**Correct Answers**: {correct_answer_count}
+**Wrong Answers**: {wrong_answer_count}
 
 Keep up the great work 🚀
     `,

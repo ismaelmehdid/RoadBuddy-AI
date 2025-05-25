@@ -2,8 +2,12 @@ import type { Config } from 'drizzle-kit';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL is not defined');
+}
+
 // Parse DATABASE_URL to get individual components
-const dbUrl = new URL('postgresql://postgres:postgres@db:5432/telegram_bot');
+const dbUrl = new URL(process.env.DATABASE_URL);
 
 export default {
   schema: './src/db/schema.ts',

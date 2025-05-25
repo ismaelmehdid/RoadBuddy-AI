@@ -72,7 +72,7 @@ export class FlowRunner {
       let userToProccess = user;
 
       if (callback !== null) {
-        const update = await updateUser(user, interpretCity(callback), interpretCountry(callback));
+        const update = await updateUser(user, interpretCity(callback), interpretCountry(callback), null);
         if (update.isErr()) {
           return err(new Error("Failed to update user with country"));
         }
@@ -125,6 +125,8 @@ export class FlowRunner {
       if (getQuestionResult.isErr()) {
         return err(new Error("Failed to get question"));
       }
+
+      await updateUser(user, null, null, getQuestionResult.value.explanation);
 
       console.log("getQuestionResult", getQuestionResult.value);
 
@@ -203,7 +205,12 @@ export class FlowRunner {
 
         const sendTelegramMessageResult = await sendTelegramMessage({
           chat_id: user.chat_id,
-          text: `🎉 Correct answer! You got it right ${correct_answer_count + 1} times!`,
+          text: `🎉 Correct answer!
+
+You got it right ${correct_answer_count + 1} times!
+
+Explanation: ${user.explanation}`,
+
           parse_mode: "MarkdownV2",
         });
         if (sendTelegramMessageResult.isErr()) {
@@ -224,7 +231,11 @@ export class FlowRunner {
 
         const sendTelegramMessageResult = await sendTelegramMessage({
           chat_id: user.chat_id,
-          text: `❌ Wrong answer! You got it wrong ${wrong_answer_count + 1} times! The correct answer was ${current_correct_answer_id}`,
+          text: `❌ Wrong answer! You got it wrong ${wrong_answer_count + 1} times!
+
+The correct answer was ${current_correct_answer_id}.
+
+Explanation: ${user.explanation}`,
           parse_mode: "MarkdownV2",
         });
         if (sendTelegramMessageResult.isErr()) {

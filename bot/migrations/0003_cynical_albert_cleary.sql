@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "explanation" varchar(2048) DEFAULT '';

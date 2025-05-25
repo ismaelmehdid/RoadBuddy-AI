@@ -14,6 +14,7 @@ export interface User {
   current_correct_answer_id: string;
   city:  City | null;
   country:  Countries | null;
+  explanation: string | null;
 }
 
 async function rowToUser(row: any): Promise<User> {
@@ -25,6 +26,7 @@ async function rowToUser(row: any): Promise<User> {
     current_correct_answer_id: row.current_correct_answer_id,
     city: row.city,
     country: row.country,
+    explanation: row.explanation,
   };
 }
 
@@ -99,7 +101,8 @@ export async function setUserToMainMenu(user: User): Promise<Result<boolean, Err
 export async function updateUser(
   user: User,
   city: City | null,
-  country: Countries | null
+  country: Countries | null,
+  explanation: string | null,
 ): Promise<Result<User, Error>> {
   try {
     const updateData: Record<string, any> = {};
@@ -109,6 +112,10 @@ export async function updateUser(
 
     if (country !== null) {
       updateData.country = country;
+    }
+
+    if (explanation !== null) {
+      updateData.explanation = explanation;
     }
 
     if (Object.keys(updateData).length > 0) {
