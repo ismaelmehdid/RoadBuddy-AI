@@ -48,14 +48,19 @@ A Telegram chatbot that teaches driving theory with real street photos from your
    cd ..
    ```
 2. **Setup ngrok**
+
+In another terminal please run:
+
    ```bash
    ngrok htpp 3000
    ```
+
+
    <img width="821" alt="Screenshot 2025-05-24 at 20 36 55" src="https://github.com/user-attachments/assets/590ac93b-2779-43ec-b1af-bedeb65366d0" />
 
-   Copy your URL to setup env
+   Copy the URL highlighted in the image above to set up your environment variables later.
 
-3. **To create your own bot, simply follow these steps**
+4. **To create your own bot, simply follow these steps**
    1. Message [@BotFather](https://t.me/BotFather) on Telegram with the command **/newbot**.
    2. Follow the prompts to provide the necessary information.
    3. Once done, you’ll receive a token like this: `7899634355:AAH21k1iAJuw4UyCLBXQo80zkvuqJ0f89WQ` (note: this is just an example and not real data).
@@ -76,9 +81,10 @@ A Telegram chatbot that teaches driving theory with real street photos from your
    BOT_PORT=3000
    WEBHOOK_URL=
    ```
-   where WEBHOOK_URL is your ngok url.
+   Paste the ngrok URL you copied earlier into the `WEBHOOK_URL` variable.
+   Also, paste your Telegram token into the `TELEGRAM_TOKEN` variable.
 
-4. **Almost ready to start!**
+5. **Almost ready to start!**
 
    If you followed all the steps correctly, run the final command to start the project:
 
